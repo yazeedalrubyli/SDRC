@@ -1,8 +1,17 @@
 import RPi.GPIO as GPIO
-import pygame
-from pygame.locals import *
+import curses
 
-pygame.init()
+# get the curses screen window
+screen = curses.initscr()
+
+# turn off input echoing
+curses.noecho()
+
+# respond to keys immediately (don't wait for enter)
+curses.cbreak()
+
+# map arrow keys to special values
+screen.keypad(True)
 
 MotorFront1 = 36
 MotorFront2 = 38
@@ -14,8 +23,6 @@ MotorBack = 33
 
 class Controller(object):
 	def __init__(self):
-		pygame.init()
-
         	GPIO.setmode(GPIO.BOARD)
 
         	GPIO.setup(MotorFront1,GPIO.OUT)
@@ -25,24 +32,32 @@ class Controller(object):
 	        GPIO.setup(MotorBack1,GPIO.OUT)
 	        GPIO.setup(MotorBack2,GPIO.OUT)
 	        GPIO.setup(MotorBack,GPIO.OUT)
- 
-	def move(f1, f2, f, b1, b2, b):
-		GPIO.output(MotorFront1,f1)
-	        GPIO.output(MotorFront2,f2)
-	        GPIO.output(MotorFront,f)
-
-		GPIO.output(MotorBack1,b1)
-	        GPIO.output(MotorBack2,b2)
+	
+	def front(f1,f2,f):
+        	GPIO.output(MotorFront1,f1)
+        	GPIO.output(MotorFront2,f2)
+        	GPIO.output(MotorFront,f)
+	
+	def rear(b1,b2,b):
+        	GPIO.output(MotorBack1,b1)
+        	GPIO.output(MotorBack2,b2)
         	GPIO.output(MotorBack,b)
 
 if __name__ == "__main__":
 	carCtrl = Controller()
 	GPIO.cleanup()
-	while 1:
-		events = pygame.event.get()
-		for event in events:
-		    if event.type == pygame.KEYDOWN:
-		        if event.key == pygame.K_LEFT:
-		            print(0)
-		        if event.key == pygame.K_RIGHT:
-		            print(1)
+	try:
+		while 1:
+			char = screen.getch()
+			if char == ord('w'):
+			    front(0,1,1)
+			if char == ord('s'):
+			    front(1,0,1)
+			if char == ord('d'):
+			    rear(0,1,1)
+			if char == ord('a'):
+			    rear(1,0,1)
+	
+	except KeyboardInterrupt:
+		curses.nocbreak(); screen.keypad(0); curses.echo()
+		curses.endwin()
