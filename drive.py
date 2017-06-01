@@ -98,9 +98,9 @@ if __name__ == '__main__':
     carCol = Collector()
     direction = 0
     try:
-        thread.start_new_thread(screen.getch,(carCtrl, direction))
+        thread.start_new_thread(steering,(carCtrl, direction))
         while True:
-            #thread.start_new_thread(screen.getch,(carCtrl, direction))
+            #thread.start_new_thread(steering,(carCtrl, direction))
             carCam.capture()
             carCol.write(str(direction))
     except:
