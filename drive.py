@@ -54,7 +54,8 @@ class Controller:
         GPIO.setup(self.MotorBack2, GPIO.OUT)
         GPIO.setup(self.MotorBack, GPIO.OUT)
         GPIO.output(self.MotorBack, 0)
-
+        
+        self.direction = 0
     def front(self,f1,f2,f):
         GPIO.output(self.MotorFront1, f1)
         GPIO.output(self.MotorFront2, f2)
@@ -65,23 +66,24 @@ class Controller:
         GPIO.output(self.MotorBack2, b2)
         GPIO.output(self.MotorBack, b)
     
-    def steering(self, carCtrl, direction):
-        char = screen.getch()
-        if char == ord('d'):
-            carCtrl.front(0, 1, 1)
-            direction = 1
-        elif char == ord('a'):
-            carCtrl.front(1, 0, 1)
-            direction = 2
-        elif char == ord('s'):
-            carCtrl.front(0, 0, 0)
-            direction = 0 
-        if char == ord('w'):
-            carCtrl.rear(0, 1, 1)
-        if char == ord(' '):
-            carCtrl.rear(1, 0, 1)
-            sleep(0.1)
-            carCtrl.rear(0, 0, 0)
+    def steering(self):
+        while 1:
+            char = screen.getch()
+            if char == ord('d'):
+                self.front(0, 1, 1)
+                self.direction = 1
+            elif char == ord('a'):
+                self.front(1, 0, 1)
+                self.direction = 2
+            elif char == ord('s'):
+                self.front(0, 0, 0)
+                self.direction = 0 
+            if char == ord('w'):
+                self.rear(0, 1, 1)
+            if char == ord(' '):
+                self.rear(1, 0, 1)
+                sleep(0.1)
+                self.rear(0, 0, 0)
 
 class Collector:
 
@@ -96,13 +98,12 @@ if __name__ == '__main__':
     carCtrl = Controller()
     carCam = Camera()
     carCol = Collector()
-    direction = 0
     try:
-        thread.start_new_thread(steering,(carCtrl, direction))
+        thread.start_new_thread(carCtrl.steering,())
         while True:
-            #thread.start_new_thread(steering,(carCtrl, direction))
+            #thread.start_new_thread(carCtrl.steering,(carCtrl, direction))
             carCam.capture()
-            carCol.write(str(direction))
+            carCol.write(str(carCtrl.direction))
     except:
         curses.nocbreak()
         screen.keypad(0)
