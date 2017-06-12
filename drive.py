@@ -11,12 +11,7 @@ import argparse
 import sys
 import csv
 import os
-'''
-screen = curses.initscr()
-curses.noecho()
-curses.cbreak()
-screen.keypad(True)
-'''
+
 class Camera:
     imgsPath = "data/imgs/"
 
@@ -35,9 +30,6 @@ class Camera:
         self.stream.seek(0)
         self.stream.truncate()
         return image
-        #im = Image.fromarray(image)
-        #imgPath = self.imgsPath + str(len(os.listdir(self.imgsPath))) + ".jpeg"
-        #im.save(imgPath)
     
     def save_img(self,img):
         im = Image.fromarray(image)
@@ -142,44 +134,32 @@ if __name__ == '__main__':
         curses.noecho()
         curses.cbreak()
         screen.keypad(True)
-        if args.collect:
-            try:
-                carCtrl = Controller()
-                carCam = Camera()
-                carCol = Collector()
-                thread.start_new_thread(carCtrl.steering,())
-                while True:
-                    carCam.save_img(carCam.capture())
-                    carCol.write(str(carCtrl.direction))
-            except:
-                carCtrl.BackPWM.stop()
-                GPIO.cleanup()
+        carCtrl = Controller()
+        carCam = Camera()
+        if args.collect:                
+            carCol = Collector()
+            thread.start_new_thread(carCtrl.steering,())
+            while True:
+                carCam.save_img(carCam.capture())
+                carCol.write(str(carCtrl.direction))
         elif args.drive:
-            try:
-                carCam = Camera()
-                carCtrl = Controller()
-                carCtrl.rear(0, 1, 70)
-                while True:
-                    img = carCam.preprocess_img(carCam.capture())
-                    histogram = np.sum(img[img.shape[0]//2:,:], axis=0)
-                    right = np.sum(histogram[220:], dtype=int)
-                    left = np.sum(histogram[:100], dtype=int)
-                    if (right - left) > 200 or left == 0:
-                        carCtrl.front(1, 0, 1)
-                    elif (right - left) < -200 or right == 0:
-                        carCtrl.front(0, 1, 1)
-                    else:
-                        carCtrl.front(0, 0, 0)
-            except:
-                carCtrl.BackPWM.stop()
-                GPIO.cleanup()
-                curses.nocbreak()
-                screen.keypad(0)
-                curses.echo()
-                curses.endwin()
+            carCtrl.rear(0, 1, 70)
+            while True:
+                img = carCam.preprocess_img(carCam.capture())
+                histogram = np.sum(img[img.shape[0]//2:,:], axis=0)
+                right = np.sum(histogram[220:], dtype=int)
+                left = np.sum(histogram[:100], dtype=int)
+                if (right - left) > 200 or left == 0:
+                    carCtrl.front(1, 0, 1)
+                elif (right - left) < -200 or right == 0:
+                    carCtrl.front(0, 1, 1)
+                else:
+                    carCtrl.front(0, 0, 0)
     except:
         curses.nocbreak()
         screen.keypad(0)
         curses.echo()
         curses.endwin()
+        carCtrl.BackPWM.stop()
+        GPIO.cleanup()
         raise
