@@ -26,13 +26,13 @@ class Camera:
 
     def capture(self):
         self.camera.capture(self.stream, format='yuv')
-        image = self.stream.array[270:,:,0]
+        img = self.stream.array[270:,:,0]
         self.stream.seek(0)
         self.stream.truncate()
-        return image
+        return img
     
     def save_img(self,img):
-        im = Image.fromarray(image)
+        im = Image.fromarray(img)
         imgPath = self.imgsPath + str(len(os.listdir(self.imgsPath))) + ".jpeg"
         im.save(imgPath)
     
