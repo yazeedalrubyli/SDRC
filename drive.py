@@ -109,7 +109,7 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],"hca:",["collect=","autonomous="])
     except getopt.GetoptError:
-      print('drive.py -c|-a')
+      print('1drive.py -c|-a')
       sys.exit(2)
     try:
         screen = curses.initscr()
@@ -118,16 +118,20 @@ if __name__ == '__main__':
         screen.keypad(True)
         for opt, arg in opts:
             if opt == '-h':
-                print 'drive.py -c|-a'
+                print('2drive.py -c|-a')
                 sys.exit()
             elif opt in ("-c", "--collect"):
-                carCtrl = Controller()
-                carCam = Camera()
-                carCol = Collector()
-                thread.start_new_thread(carCtrl.steering,())
-                while True:
-                    carCam.capture()
-                    carCol.write(str(carCtrl.direction))
+                try:
+                    carCtrl = Controller()
+                    carCam = Camera()
+                    carCol = Collector()
+                    thread.start_new_thread(carCtrl.steering,())
+                    while True:
+                        carCam.capture()
+                        carCol.write(str(carCtrl.direction))
+                except:
+                    carCtrl.BackPWM.stop()
+                    GPIO.cleanup()
             elif opt in ("-a","--autonomous"):
                 import tensorflow
     except:
@@ -135,6 +139,4 @@ if __name__ == '__main__':
         screen.keypad(0)
         curses.echo()
         curses.endwin()
-        carCtrl.BackPWM.stop()
-        GPIO.cleanup()
         raise
