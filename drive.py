@@ -6,26 +6,31 @@ import picamera.array
 import picamera
 import thread
 import curses
-#import sys
+import getopt
+import sys
 import csv
 import os
-
+'''
 screen = curses.initscr()
 curses.noecho()
 curses.cbreak()
 screen.keypad(True)
-
+'''
 class Camera:
     imgsPath = "data/imgs/"
 
     def __init__(self):
         self.camera = picamera.PiCamera()
         self.camera.vflip = True
-        self.stream = picamera.array.PiRGBArray(self.camera)
-    
+        self.camera.hflip = True
+        #self.camera.resolution = (320, 160)
+        self.camera.start_preview()
+        sleep(5)
+        self.stream = picamera.array.PiYUVArray(self.camera)
+
     def capture(self):
-        self.camera.capture(self.stream, format='rgb')
-        image = self.stream.array[200:,:,:]
+        self.camera.capture(self.stream, format='yuv')
+        image = self.stream.array[270:,:,0]
         self.stream.seek(0)
         self.stream.truncate()
         im = Image.fromarray(image)
@@ -85,12 +90,11 @@ class Controller:
                 self.front(0, 0, 0)
                 self.direction = 0 
             if char == ord('w'):
-                self.rear(0, 1, 50)
+                self.rear(0, 1, 70)
             if char == ord(' '):
                 self.rear(1, 0, 1)
                 sleep(0.1)
                 self.rear(0, 0, 0)
-                #sys.exit()
 
 class Collector:
 
@@ -102,14 +106,30 @@ class Collector:
         self.writer.writerow(direction)
 
 if __name__ == '__main__':
-    carCtrl = Controller()
-    carCam = Camera()
-    carCol = Collector()
     try:
-        thread.start_new_thread(carCtrl.steering,())
-        while True:
-            carCam.capture()
-            carCol.write(str(carCtrl.direction))
+        opts, args = getopt.getopt(sys.argv[1:],"hca:",["collect=","autonomous="])
+    except getopt.GetoptError:
+      print('drive.py -c|-a')
+      sys.exit(2)
+    try:
+        screen = curses.initscr()
+        curses.noecho()
+        curses.cbreak()
+        screen.keypad(True)
+        for opt, arg in opts:
+            if opt == '-h':
+                print 'drive.py -c|-a'
+                sys.exit()
+            elif opt in ("-c", "--collect"):
+                carCtrl = Controller()
+                carCam = Camera()
+                carCol = Collector()
+                thread.start_new_thread(carCtrl.steering,())
+                while True:
+                    carCam.capture()
+                    carCol.write(str(carCtrl.direction))
+            elif opt in ("-a","--autonomous"):
+                import tensorflow
     except:
         curses.nocbreak()
         screen.keypad(0)
