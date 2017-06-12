@@ -6,7 +6,7 @@ import picamera.array
 import picamera
 import thread
 import curses
-import getopt
+import argparse
 import sys
 import csv
 import os
@@ -107,20 +107,11 @@ class Collector:
 
 if __name__ == '__main__':
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hca:",["collect=","autonomous="])
-    except getopt.GetoptError:
-      print('1drive.py -c|-a')
-      sys.exit(2)
-    try:
         screen = curses.initscr()
         curses.noecho()
         curses.cbreak()
         screen.keypad(True)
-        for opt, arg in opts:
-            if opt == '-h':
-                print('2drive.py -c|-a')
-                sys.exit()
-            elif opt in ("-c", "--collect"):
+            if opt in ("-c", "--collect"):
                 try:
                     carCtrl = Controller()
                     carCam = Camera()
