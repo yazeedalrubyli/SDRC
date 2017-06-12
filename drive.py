@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 from PIL import Image
 import picamera.array
+import numpy as np
 import picamera
 import thread
 import curses
@@ -33,9 +34,23 @@ class Camera:
         image = self.stream.array[270:,:,0]
         self.stream.seek(0)
         self.stream.truncate()
+        return image
+        #im = Image.fromarray(image)
+        #imgPath = self.imgsPath + str(len(os.listdir(self.imgsPath))) + ".jpeg"
+        #im.save(imgPath)
+    
+    def save_img(self,img):
         im = Image.fromarray(image)
         imgPath = self.imgsPath + str(len(os.listdir(self.imgsPath))) + ".jpeg"
         im.save(imgPath)
+    
+    def preprocess_img(self,img):
+        b_min = 0
+        b_max = 135
+        b_binary = np.zeros_like(img)
+        b_binary[(img >= b_min) & (img <= b_max)] = 1
+        
+        return b_binary
         
 
 class Controller:
@@ -105,26 +120,63 @@ class Collector:
     def write(self, direction):
         self.writer.writerow(direction)
 
+def main():
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-d","--drive",help="Drive Autonomously",action="store_true")
+    group.add_argument("-c","--collect", help="Collect Images/Steering Data",action="store_true")
+    args = parser.parse_args()
+
+    if args.drive:
+        return args
+    elif args.collect:
+        return args
+    else:
+        parser.print_help()   
+        sys.exit(2)
+
 if __name__ == '__main__':
+    args = main()
     try:
         screen = curses.initscr()
         curses.noecho()
         curses.cbreak()
         screen.keypad(True)
-            if opt in ("-c", "--collect"):
-                try:
-                    carCtrl = Controller()
-                    carCam = Camera()
-                    carCol = Collector()
-                    thread.start_new_thread(carCtrl.steering,())
-                    while True:
-                        carCam.capture()
-                        carCol.write(str(carCtrl.direction))
-                except:
-                    carCtrl.BackPWM.stop()
-                    GPIO.cleanup()
-            elif opt in ("-a","--autonomous"):
-                import tensorflow
+        if args.collect:
+            try:
+                carCtrl = Controller()
+                carCam = Camera()
+                carCol = Collector()
+                thread.start_new_thread(carCtrl.steering,())
+                while True:
+                    carCam.save_img(carCam.capture())
+                    carCol.write(str(carCtrl.direction))
+            except:
+                carCtrl.BackPWM.stop()
+                GPIO.cleanup()
+        elif args.drive:
+            try:
+                carCam = Camera()
+                carCtrl = Controller()
+                carCtrl.rear(0, 1, 70)
+                while True:
+                    img = carCam.preprocess_img(carCam.capture())
+                    histogram = np.sum(img[img.shape[0]//2:,:], axis=0)
+                    right = np.sum(histogram[220:], dtype=int)
+                    left = np.sum(histogram[:100], dtype=int)
+                    if (right - left) > 200 or left == 0:
+                        carCtrl.front(1, 0, 1)
+                    elif (right - left) < -200 or right == 0:
+                        carCtrl.front(0, 1, 1)
+                    else:
+                        carCtrl.front(0, 0, 0)
+            except:
+                carCtrl.BackPWM.stop()
+                GPIO.cleanup()
+                curses.nocbreak()
+                screen.keypad(0)
+                curses.echo()
+                curses.endwin()
     except:
         curses.nocbreak()
         screen.keypad(0)
