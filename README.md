@@ -55,5 +55,5 @@ ___
 In order to let the car autonomously drive, we need it to control itself. So, we need first to figure out a way to control it using some keys and I chose keys(w,a,s,d) on the keyboard as they used in games, w: Forward, s: Straight, a: Left, d: Right. You can find the code for controlling the RC Car in my Github Repo.
 Note: Please submit Pull Request if you have better implementation.
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=XDVCRzrqEEw" target="_blank"><img src="https://cdn-images-1.medium.com/max/1200/1*gsSCLn6xJgeUHcrCQc-m8A.jpeg" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+### Youtube Video
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=XDVCRzrqEEw" target="_blank"><img src="https://cdn-images-1.medium.com/max/1200/1*gsSCLn6xJgeUHcrCQc-m8A.jpeg" border="10" /></a>
