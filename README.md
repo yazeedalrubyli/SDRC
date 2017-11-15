@@ -103,7 +103,7 @@ So I run the raspberry pi, camera and motors on the same portable battery (5v-2A
 
 ### Youtube Video
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=gfoo4ICyNF8" target="_blank"><img src="http://img.youtube.com/vi/gfoo4ICyNF8/0.jpg" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=gfoo4ICyNF8" target="_blank"><img src="https://cdn-images-1.medium.com/max/2000/1*NFHRKcs9Coiwse128O-kYA.jpeg" border="10" /></a>
 
 ## Many Thanks To You All
 I’ll continue to improve the algorithm and add some documentation on GitHub. I’ll post a new story if a major improvement is made. In the meanwhile, we came to the end of this series, if you want to go further, you may need object detection and avoidance. Your support, inputs are highly appreciated and if you find it useful please share.
