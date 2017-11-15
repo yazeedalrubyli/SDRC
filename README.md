@@ -6,7 +6,7 @@
 ## Step 1 : Equipment
 
 1. RC Car
-(https://cdn-images-1.medium.com/max/1600/1*kCckm8CEkLI2MONEiNBN0A.jpeg)
+!(https://cdn-images-1.medium.com/max/1600/1*kCckm8CEkLI2MONEiNBN0A.jpeg)
 
 2. Raspberry Pi 3
 
