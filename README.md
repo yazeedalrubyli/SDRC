@@ -56,4 +56,54 @@ In order to let the car autonomously drive, we need it to control itself. So, we
 Note: Please submit Pull Request if you have better implementation.
 
 ### Youtube Video
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=XDVCRzrqEEw" target="_blank"><img src="https://cdn-images-1.medium.com/max/1200/1*gsSCLn6xJgeUHcrCQc-m8A.jpeg" border="10" /></a>
+
+___
+
+## Step 4: Put Everything In Place
+
+### Youtube Video
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=pHHOwS2PMaE" target="_blank"><img src="https://cdn-images-1.medium.com/max/2000/1*Zkwappwlzrj0U_9mLZpp4Q.jpeg" border="10" /></a>
+
+___
+
+## Step 5: Server-Less Control Using Computer Vision
+
+First, we get an image from the stream and take the Y component from YUV color space which represent the gray scale of the original RGB image.
+
+```python
+camera = picamera.PiCamera() # Initialise Camera Object 
+stream = picamera.array.PiYUVArray(camera) # Initialise Stream
+camera.capture(stream, format='yuv') # Capture YUV image from Stream
+img = self.stream.array[:,:,0] # Choose Y Channel
+```
+
+![](https://cdn-images-1.medium.com/max/2000/1*bLgDswF3UGxFOPDhiPFEHA.png)
+
+```python
+min = 0        
+max = 135        
+binary = np.zeros_like(img)        
+binary[(img >= min) & (img <= max)] = 1
+```
+
+![](https://cdn-images-1.medium.com/max/2000/1*gb0AJfOjQRJbP9YVK0cmXw.png)
+
+```python
+histogram = np.sum(binary[binary.shape[0]//2:,:], axis=0)
+```
+
+![](https://cdn-images-1.medium.com/max/2000/1*ckKnUlrlYZFifSQTcTmM1g.png)
+
+
+Based on certain calculations that differ from one situation to another, in my case I divided the histogram into right and left. If the right has more weight than the left steer left otherwise steer right.
+So I run the raspberry pi, camera and motors on the same portable battery (5v-2A) and it works just fine, but as you may notice in the video below it is relatively slow.
+
+### Youtube Video
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=gfoo4ICyNF8" target="_blank"><img src="http://img.youtube.com/vi/gfoo4ICyNF8/0.jpg" border="10" /></a>
+
+## Many Thanks To You All
+I’ll continue to improve the algorithm and add some documentation on GitHub. I’ll post a new story if a major improvement is made. In the meanwhile, we came to the end of this series, if you want to go further, you may need object detection and avoidance. Your support, inputs are highly appreciated and if you find it useful please share.
