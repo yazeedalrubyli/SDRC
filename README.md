@@ -1,7 +1,7 @@
 # SDRC
 
 ## Full Post on Medium
-[Building Self-Driving RC Car Series](https://becominghuman.ai/building-self-driving-rc-car-series-1-intro-equipments-plan-8d9f579df45c)
+### [Building Self-Driving RC Car Series](https://becominghuman.ai/building-self-driving-rc-car-series-1-intro-equipments-plan-8d9f579df45c)
 
 ___
 
