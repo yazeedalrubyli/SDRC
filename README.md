@@ -1,10 +1,5 @@
 # SDRC
 
-## Full Post on Medium
-### [Building Self-Driving RC Car Series](https://becominghuman.ai/building-self-driving-rc-car-series-1-intro-equipments-plan-8d9f579df45c)
-
-___
-
 ## Step 1 : Equipment
 
 ### 1. RC Car
@@ -110,3 +105,9 @@ ___
 ## What Next?
 
 I’ll continue to improve the algorithm and add some documentation on GitHub. I’ll post a new story if a major improvement is made. In the meanwhile, we came to the end of this series, if you want to go further, you may need object detection and avoidance. Your support, inputs are highly appreciated and if you find it useful please share.
+
+___
+
+## Originally Posted on Medium
+
+### [Building Self-Driving RC Car Series](https://becominghuman.ai/building-self-driving-rc-car-series-1-intro-equipments-plan-8d9f579df45c)
