@@ -1,11 +1,20 @@
 #!/usr/bin/python
+"""
+https://github.com/yazeedalrubyli/SDRC
+No opencv
+!!!Caution: in this file "thread" module is used, which is no longer being used in python3.
+Though for backward compatibility it is renamed as "_thread". So there is a risk of python2 code.
+Also here RPI.GPIO is used, it is deprecated too.!!!!
+"""
+
 import RPi.GPIO as GPIO
 from time import sleep
 from PIL import Image
 import picamera.array
 import numpy as np
 import picamera
-import thread
+#import thread    # deprecated, replaced by "_thread"
+import _thread
 import curses
 import argparse
 import sys
@@ -138,7 +147,8 @@ if __name__ == '__main__':
         carCam = Camera()
         if args.collect:                
             carCol = Collector()
-            thread.start_new_thread(carCtrl.steering,())
+            #thread.start_new_thread(carCtrl.steering,())    #deprecated replaced by "_thread"
+            _thread.start_new_thread(carCtrl.steering,())
             while True:
                 carCam.save_img(carCam.capture())
                 carCol.write(str(carCtrl.direction))
