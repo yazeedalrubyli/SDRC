@@ -5,7 +5,7 @@ from PIL import Image
 import picamera.array
 import numpy as np
 import picamera
-import thread
+import _thread
 import curses
 import argparse
 import sys
@@ -138,7 +138,7 @@ if __name__ == '__main__':
         carCam = Camera()
         if args.collect:                
             carCol = Collector()
-            thread.start_new_thread(carCtrl.steering,())
+            _thread.start_new_thread(carCtrl.steering,())
             while True:
                 carCam.save_img(carCam.capture())
                 carCol.write(str(carCtrl.direction))
